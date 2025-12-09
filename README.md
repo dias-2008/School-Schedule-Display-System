@@ -17,7 +17,7 @@ A modern, responsive web application for displaying school schedules on TV scree
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/dias-2008/School-Schedule-Display-System.git
 cd Scheduel
 ```
 
