@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание Школы - TV</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=39">
+</head>
+
+<body>
+    <div class="background-animation"></div>
+
+    <!-- Hamburger Menu Button -->
+    <button id="menu-toggle" class="hamburger-btn" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Header Controls (Hidden by default) -->
+    <div id="header-controls" class="header-controls" style="display: none;">
+        <!-- Shift Selector -->
+        <div class="shift-selector">
+            <button id="shift-1-btn" class="shift-btn active" onclick="setShift(1)">Смена 1</button>
+            <button id="shift-2-btn" class="shift-btn" onclick="setShift(2)">Смена 2</button>
+        </div>
+
+        <!-- Search Input -->
+        <input type="text" id="class-search" placeholder="Поиск (например, 11А)..." class="search-input">
+
+        <!-- Admin Link -->
+        <a href="admin.html" class="admin-link">Admin</a>
+    </div>
+
+    <!-- Main Container for Slides -->
+    <div id="schedule-container" class="fullscreen-container">
+        <!-- Slides will be injected here by JS -->
+        <div class="loading">Загрузка расписания...</div>
+    </div>
+
+    <script src="sheets_config.js"></script>
+    <script src="script.js?v=35"></script>
+    <script>
+        function toggleMenu() {
+            const controls = document.getElementById('header-controls');
+            const btn = document.getElementById('menu-toggle');
+
+            if (controls.style.display === 'none') {
+                controls.style.display = 'flex';
+                btn.classList.add('active');
+            } else {
+                controls.style.display = 'none';
+                btn.classList.remove('active');
+            }
+        }
+
+        function setShift(shiftNumber) {
+            // Save to localStorage
+            localStorage.setItem('selected_shift', shiftNumber);
+
+            // Update UI
+            document.querySelectorAll('.shift-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`shift-${shiftNumber}-btn`).classList.add('active');
+
+            // Reload schedules
+            location.reload();
+        }
+
+        // Initialize shift buttons on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const selectedShift = localStorage.getItem('selected_shift') || '1';
+            document.querySelectorAll('.shift-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`shift-${selectedShift}-btn`).classList.add('active');
+        });
+    </script>
+</body>
+
+</html>

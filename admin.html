@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ Панель - Расписание</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=39">
+    <style>
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-family: inherit;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .link-url {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .logs-container {
+            background: #000;
+            padding: 1rem;
+            border-radius: 8px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #0f0;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.2rem;
+        }
+
+        .log-time {
+            color: #888;
+            margin-right: 0.5rem;
+        }
+
+        .log-error {
+            color: #ef4444;
+        }
+
+        .nav-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        /* Override global style for admin page */
+        body {
+            overflow-y: auto !important;
+        }
+
+        .container {
+            padding-bottom: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-animation"></div>
+    <div class="container">
+
+        <!-- Login Section -->
+        <div id="login-section" class="admin-container" style="text-align: center; margin-top: 10vh;">
+            <h2>Вход в админ-панель</h2>
+            <div style="max-width: 300px; margin: 2rem auto;">
+                <input type="text" id="login-user" placeholder="Логин"
+                    style="width: 100%; margin-bottom: 1rem; padding: 10px;">
+                <input type="password" id="login-pass" placeholder="Пароль"
+                    style="width: 100%; margin-bottom: 1rem; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; color: white;">
+                <button onclick="attemptLogin()" style="width: 100%;">Войти</button>
+            </div>
+            <a href="index.html" class="nav-link">Вернуться к расписанию</a>
+        </div>
+
+        <!-- Admin Content (Hidden by default) -->
+        <div id="admin-content" style="display: none;">
+            <a href="index.html" class="nav-link">← Вернуться к расписанию</a>
+            <header>
+                <h1>Управление Расписанием</h1>
+            </header>
+
+            <div class="admin-container">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="showTab('links')">Ссылки</button>
+                    <button class="tab-btn" onclick="showTab('logs')">Логи</button>
+                    <button class="tab-btn danger" onclick="logout()"
+                        style="margin-left: auto; background: rgba(239, 68, 68, 0.2);">Выйти</button>
+                </div>
+
+                <!-- Links Tab -->
+                <div id="tab-links" class="tab-content">
+                    <h2>Ссылки на Google Таблицы</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Добавьте ссылки на опубликованные
+                        таблицы
+                        (pubhtml).</p>
+
+                    <div class="input-group">
+                        <input type="text" id="sheet-name-input" placeholder="Название (например, 9А)"
+                            style="flex: 0.4">
+                        <input type="text" id="sheet-url-input" placeholder="Вставьте ссылку на Google Sheet...">
+                        <button onclick="addSheet()">Добавить</button>
+                    </div>
+
+                    <div id="link-list" class="link-list">
+                        <!-- Links will be added here -->
+                    </div>
+
+                    <div style="margin-top: 2rem; text-align: right;">
+                        <button class="danger" onclick="resetAll()">Сбросить все настройки</button>
+                    </div>
+                </div>
+
+                <!-- Logs Tab -->
+                <div id="tab-logs" class="tab-content" style="display: none;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2>Системные Логи</h2>
+                        <button class="danger" onclick="clearLogs()">Очистить Логи</button>
+                    </div>
+                    <div id="logs-output" class="logs-container">
+                        <!-- Logs will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="sheets_config.js"></script>
+    <script src="script.js?v=35"></script>
+    <script>
+        // Authentication Logic
+        const CREDENTIALS = {
+            user: 'учитель',
+            pass: 'Айсулу'
+        };
+
+        function checkAuth() {
+            return sessionStorage.getItem('admin_auth') === 'true';
+        }
+
+        function attemptLogin() {
+            const user = document.getElementById('login-user').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+
+            if (user === CREDENTIALS.user && pass === CREDENTIALS.pass) {
+                sessionStorage.setItem('admin_auth', 'true');
+                showAdminPanel();
+            } else {
+                alert('Неверный логин или пароль');
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('admin_auth');
+            location.reload();
+        }
+
+        function showAdminPanel() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+
+            // Initialize Admin Logic
+            renderLinks();
+            renderLogs();
+            setInterval(renderLogs, 2000);
+            showTab('links');
+        }
+
+        // Admin specific logic
+        document.addEventListener('DOMContentLoaded', () => {
+            if (checkAuth()) {
+                showAdminPanel();
+            }
+            // Otherwise login screen is shown by default
+        });
+
+        function showTab(tabName) {
+            // Buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                // Skip the logout button
+                if (btn.textContent === 'Выйти') return;
+
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(tabName === 'links' ? 'ссылки' : 'логи')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Content
+            document.getElementById('tab-links').style.display = tabName === 'links' ? 'block' : 'none';
+            document.getElementById('tab-logs').style.display = tabName === 'logs' ? 'block' : 'none';
+        }
+
+        function addSheet() {
+            const urlInput = document.getElementById('sheet-url-input');
+            const nameInput = document.getElementById('sheet-name-input');
+
+            const url = urlInput.value.trim();
+            const name = nameInput.value.trim();
+
+            if (url) {
+                addSheetUrl(url, name);
+                urlInput.value = '';
+                nameInput.value = '';
+                renderLinks();
+            } else {
+                alert('Введите ссылку');
+            }
+        }
+
+        function renderLinks() {
+            const list = document.getElementById('link-list');
+            const sheets = getSheetUrls();
+            list.innerHTML = '';
+
+            if (sheets.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary)">Список пуст. Используются ссылки по умолчанию.</p>';
+            }
+
+            sheets.forEach((sheet, index) => {
+                const div = document.createElement('div');
+                div.className = 'sheet-item';
+                div.innerHTML = `
+                    <div class="sheet-info" style="overflow: hidden;">
+                        <h3>${sheet.name}</h3>
+                        <div class="link-url" title="${sheet.url}">${sheet.url}</div>
+                    </div>
+                    <button class="danger" style="padding: 0.5rem 1rem;" onclick="removeSheet(${index})">Удалить</button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function removeSheet(index) {
+            if (confirm('Удалить эту ссылку?')) {
+                removeSheetUrl(index);
+                renderLinks();
+            }
+        }
+
+        function renderLogs() {
+            const logs = getLogs();
+            const container = document.getElementById('logs-output');
+            if (logs.length === 0) {
+                container.innerHTML = '<div style="color: #666">Логов нет</div>';
+                return;
+            }
+            container.innerHTML = logs.map(l => `
+                <div class="log-entry">
+                    <span class="log-time">${new Date(l.timestamp).toLocaleTimeString()}</span>
+                    <span class="${l.type === 'error' ? 'log-error' : ''}">[${l.source}] ${l.message}</span>
+                </div>
+            `).reverse().join('');
+        }
+
+        function clearLogs() {
+            if (confirm('Очистить все логи?')) {
+                localStorage.removeItem('schedule_logs');
+                renderLogs();
+            }
+        }
+
+        function resetAll() {
+            if (confirm('Вы уверены? Это удалит все сохраненные ссылки и логи.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>
