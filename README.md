@@ -110,6 +110,36 @@ Your Google Sheets should be published to the web:
 
 ### Option 3: Cloudflare Tunnel (Remote Access)
 
+For accessing your schedule from anywhere on the internet:
+
+1. **Download Cloudflare Tunnel**:
+   - Windows: https://github.com/cloudflare/cloudflared/releases
+   - Download `cloudflared-windows-amd64.exe`
+   - Place it in your project folder
+
+2. **Start a local web server**:
+   ```bash
+   # Python 3
+   python -m http.server 8000
+   
+   # Python 2 (if needed)
+   python -m SimpleHTTPServer 8000
+   ```
+
+3. **Start Cloudflare Tunnel** (in a new terminal):
+   ```bash
+   # Windows
+   .\cloudflared-windows-amd64.exe tunnel --url localhost:8000
+   
+   # Linux/Mac
+   ./cloudflared tunnel --url localhost:8000
+   ```
+
+4. **Access your schedule**:
+   - Cloudflare will provide a public URL (e.g., `https://random-name.trycloudflare.com`)
+   - Share this URL to access from anywhere
+   - URL changes each time you restart the tunnel
+
 See [Deployment Guide](docs/deployment_guide.md) for detailed instructions.
 
 ## Browser Compatibility

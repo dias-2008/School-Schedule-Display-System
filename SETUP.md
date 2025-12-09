@@ -27,6 +27,58 @@
 4. Bookmark the page
 5. Set to full screen (F11)
 
+## For Remote Access (Optional)
+
+To access your schedule from anywhere on the internet:
+
+### Step 1: Download Cloudflare Tunnel
+
+- **Windows**: https://github.com/cloudflare/cloudflared/releases
+  - Download `cloudflared-windows-amd64.exe`
+  - Place it in your project folder
+
+- **Linux/Mac**: 
+  ```bash
+  # Install via package manager or download from releases
+  wget https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+  chmod +x cloudflared-linux-amd64
+  ```
+
+### Step 2: Start Local Server
+
+Open terminal in your project folder:
+
+```bash
+# Python 3 (recommended)
+python -m http.server 8000
+
+# Python 2 (if Python 3 not available)
+python -m SimpleHTTPServer 8000
+```
+
+### Step 3: Start Cloudflare Tunnel
+
+Open a **new terminal** in your project folder:
+
+```bash
+# Windows
+.\cloudflared-windows-amd64.exe tunnel --url localhost:8000
+
+# Linux/Mac
+./cloudflared tunnel --url localhost:8000
+```
+
+### Step 4: Access Your Schedule
+
+Cloudflare will display a URL like:
+```
+https://random-name.trycloudflare.com
+```
+
+- Share this URL to access from anywhere
+- URL changes each time you restart the tunnel
+- Keep both terminals running
+
 ## Updating Schedules
 
 ### Method 1: Via Admin Panel
