@@ -7,7 +7,7 @@
 
 2. **Clone the Repository**
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/dias-2008/School-Schedule-Display-System.git
    cd Scheduel
    ```
 
