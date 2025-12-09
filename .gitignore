@@ -18,8 +18,8 @@ npm-debug.log*
 *.tmp
 *.temp
 
-# Ignore personal configuration (optional - remove if you want to share config)
-# sheets_config.js
+# Ignore personal configuration (IMPORTANT: Keep your URLs private!)
+sheets_config.js
 
 # Ignore artifacts directory (if present)
 .gemini/
